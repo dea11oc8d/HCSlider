@@ -80,12 +80,14 @@ public class HCSlider: UIControl {
         }
     }
     
+    lazy var _thumbs = Set<HCThumb>()
+    
     // MARK: - Private properties
     
     private lazy var track = HCTrack()
     private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapped(_:)))
     private lazy var swipeGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panned(_:)))
-    private lazy var _thumbs = Set<HCThumb>()
+    
     
     private var movableThumb: HCThumb?
     private var movableThumbFrame: CGRect?
