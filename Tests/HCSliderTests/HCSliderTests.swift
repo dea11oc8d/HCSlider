@@ -36,8 +36,10 @@ final class HCSliderTests: XCTestCase {
     }
     
     func testRepositionLayers() {
-        XCTAssertEqual(slider._thumbs.first(where: { $0.id == "1"})?.layer.zPosition, 3)
-        XCTAssertEqual(slider._thumbs.first(where: { $0.id == "2"})?.layer.zPosition, 2)
+        slider.addThumb(id: "3", value: 0.6)
+        XCTAssertEqual(slider._thumbs.first(where: { $0.id == "1"})?.layer.zPosition, 5)
+        XCTAssertEqual(slider._thumbs.first(where: { $0.id == "2"})?.layer.zPosition, 3)
+        XCTAssertEqual(slider._thumbs.first(where: { $0.id == "3"})?.layer.zPosition, 4)
     }
     
     func testRemoveThumb() {
