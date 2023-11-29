@@ -1,7 +1,7 @@
 //
 //  HCSlider.swift
 //  HCSlider
-//
+// 
 //  Created by 0x01EAC5 on 26.11.2023.
 
 //  Copyright (c) 2023 0x01EAC5
@@ -40,44 +40,24 @@ public class HCSlider: UIControl {
     
     public var values: [String: Float] { _thumbs.reduce(into: [String: Float](), { $0[$1.id] = $1.value })}
     
-    /// A Boolean value that determines whether user can add new thumbs by tapping on the view. 
-    /// The default value of this property is false.
-    //    public var isUserExtendedInteractionEnabled = false {
-    //        didSet {
-    //            if isUserExtendedInteractionEnabled { addGestureRecognizer(tapGestureRecognizer) }
-    //            else { removeGestureRecognizer(tapGestureRecognizer) }
-    //        }
-    //    }
+    /// A Boolean value that determines whether user can add new thumbs by tapping on the view. The default value of this property is false.
+//    public var isUserExtendedInteractionEnabled = false {
+//        didSet {
+//            if isUserExtendedInteractionEnabled { addGestureRecognizer(tapGestureRecognizer) }
+//            else { removeGestureRecognizer(tapGestureRecognizer) }
+//        }
+//    }
     
-    /// Minimum value of the slider.
-    public var minValue: Float = 0.0 {
-        didSet {
-            _thumbs.forEach { $0.value = calculateThumbValue(with: $0.frame.midX) }
-        }
-    }
-    
-    /// Maximum value of the slider.
-    public var maxValue: Float = 1.0 {
-        didSet {
-            _thumbs.forEach { $0.value = calculateThumbValue(with: $0.frame.midX) }
-        }
-    }
+    /// A Boolean value that determines are value change events generated any time the value changes due to dragging. The default value of this property is false.
+    public var isContinuous = false
     
     /// Max number of thumbs that can be added.
     public var maxThumbs: Int?
     
-    /// A Boolean value that determines are value change events generated any time the value changes due to dragging.
-    /// The default value of this property is false.
-    public var isContinuous = false
-    
     /// Color of the slider's track.
     public var trackColor: UIColor {
-        get {
-            track.color
-        }
-        set {
-            track.color = newValue
-        }
+        get { track.color }
+        set { track.color = newValue }
     }
     
     lazy var _thumbs = Set<HCThumb>()
@@ -225,11 +205,7 @@ public class HCSlider: UIControl {
     private func calculateThumbValue(with x: CGFloat) -> Float {
         let width = x - track.frame.minX
         let fullWidth = track.frame.maxX - track.frame.minX
-        let rawValue = Float(width / fullWidth)
-        switch rawValue {
-        case .zero: return minValue
-        default: return rawValue * (maxValue - minValue)
-        }
+        return Float(width / fullWidth)
     }
     
     private func setUpView() {
