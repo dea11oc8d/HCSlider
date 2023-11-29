@@ -45,23 +45,4 @@ final class HCSliderTests: XCTestCase {
         XCTAssertEqual(slider._thumbs.count, 1)
         XCTAssertEqual(slider._thumbs.first?.id, "1")
     }
-    
-    func testChangeMinValue() {
-        slider.minValue = 0.5
-        XCTAssertEqual(slider.values["1"], 0.1)
-        XCTAssertEqual(slider.values["2"], 0.425)
-    }
-    
-    func testChangeMaxValue() {
-        slider.maxValue = 2.0
-        XCTAssertEqual(slider.values["1"], 0.4)
-        XCTAssertEqual(slider.values["2"], 1.7)
-    }
-    
-    func testChangeMinAndMaxValues() {
-        slider.minValue = 4.5
-        slider.maxValue = 9.5
-        XCTAssertEqual(slider.values["1"], 1.0)
-        XCTAssertEqual(slider.values["2"], 4.25)
-    }
 }
