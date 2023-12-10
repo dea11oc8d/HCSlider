@@ -70,6 +70,8 @@ final class HCThumb: HCColoredView {
         super.setUpView()
         
         layer.cornerRadius = Constants.side.half
+        layer.borderWidth = 1
+        layer.borderColor = UIColor(resource: .thumbBorder).cgColor
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOpacity = 0.1
         layer.shadowOffset = CGSize(width: .zero, height: 6)
