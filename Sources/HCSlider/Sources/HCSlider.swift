@@ -38,9 +38,17 @@ public class HCSlider: UIControl {
     
     // MARK: - Public properties
     
+    /// The thumbs' values
     public var values: [String: Float] { _thumbs.reduce(into: [String: Float](), { $0[$1.id] = $1.value })}
     
-    /// A Boolean value that determines whether user can add new thumbs by tapping on the view. The default value of this property is false.
+    public var pivots = [Float]() {
+        didSet {
+            pivots.sort(by: { $0 < $1 })
+        }
+    }
+    
+    /// A Boolean value that determines whether user can add new thumbs by tapping on the view. 
+    /// The default value of this property is false.
 //    public var isUserExtendedInteractionEnabled = false {
 //        didSet {
 //            if isUserExtendedInteractionEnabled { addGestureRecognizer(tapGestureRecognizer) }
@@ -48,7 +56,8 @@ public class HCSlider: UIControl {
 //        }
 //    }
     
-    /// A Boolean value that determines are value change events generated any time the value changes due to dragging. The default value of this property is false.
+    /// A Boolean value that determines are value change events generated any time the value changes due to dragging.
+    ///  The default value of this property is false.
     public var isContinuous = false
     
     /// Max number of thumbs that can be added.
@@ -56,16 +65,21 @@ public class HCSlider: UIControl {
     
     /// Color of the slider's track.
     public var trackColor: UIColor {
-        get { track.color }
-        set { track.color = newValue }
+        get {
+            track.color
+        }
+        set {
+            track.color = newValue
+        }
     }
+    
+    lazy var _thumbs = Set<HCThumb>()
     
     // MARK: - Private properties
     
     private lazy var track = HCTrack()
     private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapped(_:)))
     private lazy var swipeGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panned(_:)))
-    private lazy var _thumbs = Set<HCThumb>()
     
     private var movableThumb: HCThumb?
     private var movableThumbFrame: CGRect?
@@ -99,20 +113,25 @@ public class HCSlider: UIControl {
     
     // MARK: - Public methods
     
-    public func addThumb(id: String? = nil, value: Float, color: UIColor = .thumbColor, subtrackColor: UIColor = .subtrackColor) {
-        guard _thumbs.count < maxThumbs ?? Int.max else { return }
-        let thumb = HCThumb()
-        if let id { thumb.id = id }
-        thumb.value = value
-        thumb.color = color
-        thumb.subtrackColor = subtrackColor
-        _thumbs.insert(thumb)
-        addSubview(thumb.subtrack)
-        addSubview(thumb)
-        thumb.frame = thumbFrame(for: thumb.value)
-        thumb.subtrack.frame = subtrackFrame(forThumb: thumb)
-        repositionLayers()
-    }
+    public func addThumb(
+        id: String? = nil,
+        value: Float,
+        color: UIColor = .thumbColor,
+        subtrackColor: UIColor = .subtrackColor) {
+            
+            guard _thumbs.count < maxThumbs ?? Int.max else { return }
+            let thumb = HCThumb()
+            if let id { thumb.id = id }
+            thumb.value = value
+            thumb.color = color
+            thumb.subtrackColor = subtrackColor
+            _thumbs.insert(thumb)
+            addSubview(thumb.subtrack)
+            addSubview(thumb)
+            thumb.frame = thumbFrame(for: thumb.value)
+            thumb.subtrack.frame = subtrackFrame(forThumb: thumb)
+            repositionLayers()
+        }
     
     public func removeThumb(id: String) {
         guard let thumbIndex = _thumbs.firstIndex(where: { $0.id == id }) else { return }
