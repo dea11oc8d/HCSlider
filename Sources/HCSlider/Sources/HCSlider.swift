@@ -38,7 +38,14 @@ public class HCSlider: UIControl {
     
     // MARK: - Public properties
     
+    /// The thumbs' values
     public var values: [String: Float] { _thumbs.reduce(into: [String: Float](), { $0[$1.id] = $1.value })}
+    
+    public var pivots = [Float]() {
+        didSet {
+            pivots.sort(by: { $0 < $1 })
+        }
+    }
     
     /// A Boolean value that determines whether user can add new thumbs by tapping on the view. 
     /// The default value of this property is false.
@@ -58,8 +65,12 @@ public class HCSlider: UIControl {
     
     /// Color of the slider's track.
     public var trackColor: UIColor {
-        get { track.color }
-        set { track.color = newValue }
+        get {
+            track.color
+        }
+        set {
+            track.color = newValue
+        }
     }
     
     lazy var _thumbs = Set<HCThumb>()
