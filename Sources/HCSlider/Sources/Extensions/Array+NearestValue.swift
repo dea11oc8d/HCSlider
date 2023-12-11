@@ -1,8 +1,8 @@
 //
-//  HCSubtrack.swift
+//  Array+NearestValue.swift
 //  HCSlider
-//
-//  Created by 0x01EAC5 on 26.11.2023.
+// 
+//  Created by 0x01EAC5 on 11.12.2023.
 
 //  Copyright (c) 2023 0x01EAC5
 
@@ -25,28 +25,25 @@
 //  SOFTWARE.
 //
 
-import UIKit
+import Foundation
 
-final class HCSubtrack: HCColoredView {
+extension Array where Element: SignedNumeric, Element: Comparable {
     
-    // MARK: - Constants
-    
-    private enum Constants {
-        static let height: CGFloat = 4
-    }
-    
-    // MARK: - Initializers
-    
-    init() {
-        super.init(color: .subtrackColor)
-    }
-    
-    // MARK: - HCColoredView
-    
-    override func setUpView() {
-        super.setUpView()
-        isUserInteractionEnabled = false
-        layer.cornerRadius = Constants.height.half
+    func nearestValue(to value: Element, in range: Range<Int>) -> Element {
+        let midIndex = range.lowerBound + (range.upperBound - range.lowerBound) / 2
+        
+        if midIndex == range.lowerBound {
+            let leftDifference = abs(value - self[range.lowerBound])
+            let rightDifference = abs(value - self[range.upperBound])
+            return leftDifference <= rightDifference ? self[range.lowerBound] : self[range.upperBound]
+        }
+        
+        if value < self[midIndex] {
+            return nearestValue(to: value, in: range.lowerBound..<midIndex)
+        } else if value > self[midIndex] {
+            return nearestValue(to: value, in: midIndex..<range.upperBound)
+        } else {
+            return self[midIndex]
+        }
     }
 }
-

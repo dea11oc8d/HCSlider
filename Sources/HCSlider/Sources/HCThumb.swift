@@ -54,7 +54,7 @@ final class HCThumb: HCColoredView {
     
     private var _id: String
     private var _value: Float = 0.0
-
+    
     // MARK: - Initializers
     
     init(id: String = UUID().uuidString) {

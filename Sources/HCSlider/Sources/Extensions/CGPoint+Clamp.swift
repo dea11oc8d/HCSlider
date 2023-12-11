@@ -1,7 +1,7 @@
 //
 //  CGPoint+Clamp.swift
 //  HCSlider
-// 
+//
 //  Created by 0x01EAC5 on 26.11.2023.
 
 //  Copyright (c) 2023 0x01EAC5

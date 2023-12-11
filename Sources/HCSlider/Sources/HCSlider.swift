@@ -1,7 +1,7 @@
 //
 //  HCSlider.swift
 //  HCSlider
-// 
+//
 //  Created by 0x01EAC5 on 26.11.2023.
 
 //  Copyright (c) 2023 0x01EAC5
@@ -39,22 +39,22 @@ public class HCSlider: UIControl {
     // MARK: - Public properties
     
     /// The thumbs' values
-    public var values: [String: Float] { _thumbs.reduce(into: [String: Float](), { $0[$1.id] = $1.value })}
+    public var values: [String: Float] { _thumbs.reduce(into: [String: Float](), { $0[$1.id] = $1.value }) }
     
-    public var pivots = [Float]() {
+    public var snaps = [Float]() {
         didSet {
-            pivots.sort(by: { $0 < $1 })
+            snaps.sort(by: { $0 < $1 })
         }
     }
     
-    /// A Boolean value that determines whether user can add new thumbs by tapping on the view. 
+    /// A Boolean value that determines whether user can add new thumbs by tapping on the view.
     /// The default value of this property is false.
-//    public var isUserExtendedInteractionEnabled = false {
-//        didSet {
-//            if isUserExtendedInteractionEnabled { addGestureRecognizer(tapGestureRecognizer) }
-//            else { removeGestureRecognizer(tapGestureRecognizer) }
-//        }
-//    }
+    //    public var isUserExtendedInteractionEnabled = false {
+    //        didSet {
+    //            if isUserExtendedInteractionEnabled { addGestureRecognizer(tapGestureRecognizer) }
+    //            else { removeGestureRecognizer(tapGestureRecognizer) }
+    //        }
+    //    }
     
     /// A Boolean value that determines are value change events generated any time the value changes due to dragging.
     ///  The default value of this property is false.
@@ -107,7 +107,7 @@ public class HCSlider: UIControl {
             height: Constants.trackHeight)
         _thumbs.forEach {
             $0.frame = thumbFrame(for: $0.value)
-            $0.subtrack.frame = subtrackFrame(forThumb: $0)
+            $0.subtrack.frame = subtrackFrame(forThumbFrame: $0.frame)
         }
     }
     
@@ -129,7 +129,7 @@ public class HCSlider: UIControl {
             addSubview(thumb.subtrack)
             addSubview(thumb)
             thumb.frame = thumbFrame(for: thumb.value)
-            thumb.subtrack.frame = subtrackFrame(forThumb: thumb)
+            thumb.subtrack.frame = subtrackFrame(forThumbFrame: thumb.frame)
             repositionLayers()
         }
     
@@ -138,6 +138,33 @@ public class HCSlider: UIControl {
         let thumb = _thumbs.remove(at: thumbIndex)
         thumb.subtrack.removeFromSuperview()
         thumb.removeFromSuperview()
+    }
+    
+    public func setValue(_ value: Float, forThumbWithId id: String, animated: Bool) {
+        guard let thumb = _thumbs.first(where: { $0.id == id }) else { return }
+        if !snaps.isEmpty {
+            thumb.value = snaps.nearestValue(to: value, in: 0..<snaps.count)
+        } else {
+            thumb.value = value
+        }
+        let thumbNewFrame = thumbFrame(for: thumb.value)
+        let subtrackNewFrame = subtrackFrame(forThumbFrame: thumbNewFrame)
+        if animated {
+            UIView.animate(
+                withDuration: 0.25,
+                animations: {
+                    thumb.transform = CGAffineTransform(
+                        translationX: thumbNewFrame.midX - thumb.frame.midX,
+                        y: .zero)
+                    thumb.subtrack.transform = CGAffineTransform(
+                        scaleX: subtrackNewFrame.midX / thumb.subtrack.frame.midX,
+                        y: .zero)
+                })
+        } else {
+            thumb.frame = thumbNewFrame
+            thumb.subtrack.frame = subtrackNewFrame
+        }
+        repositionLayers()
     }
     
     // MARK: - Private methods
@@ -174,7 +201,7 @@ public class HCSlider: UIControl {
         addSubview(thumb.subtrack)
         addSubview(thumb)
         thumb.frame = thumbFrame(for: point)
-        thumb.subtrack.frame = subtrackFrame(forThumb: thumb)
+        thumb.subtrack.frame = subtrackFrame(forThumbFrame: thumb.frame)
         thumb.value = calculateThumbValue(with: thumb.frame.midX)
     }
     
@@ -183,11 +210,12 @@ public class HCSlider: UIControl {
         switch sender.state {
         case .began: movableThumb = _thumbs.filter { $0.frame.contains(point) }.first
         case .changed:
-            guard movableThumb != nil else { break }
-            moveThumb(to: point)
+            guard let movableThumb else { break }
+            moveThumb(movableThumb, to: point)
             if isContinuous { sendActions(for: .valueChanged) }
         case .ended:
-            guard movableThumb != nil else { break }
+            guard let movableThumb else { break }
+            tryToSetValueToNearest(of: movableThumb)
             self.movableThumb = nil
             sendActions(for: .valueChanged)
         case .possible, .cancelled, .failed, .recognized: break
@@ -195,11 +223,10 @@ public class HCSlider: UIControl {
         }
     }
     
-    private func moveThumb(to point: CGPoint) {
-        guard let movableThumb else { return }
-        movableThumb.frame = thumbFrame(for: point.clampX(track.frame.minX, track.frame.maxX))
-        movableThumb.subtrack.frame = subtrackFrame(forThumb: movableThumb)
-        movableThumb.value = calculateThumbValue(with: movableThumb.frame.midX)
+    private func moveThumb(_ thumb: HCThumb, to point: CGPoint) {
+        thumb.frame = thumbFrame(for: point.clampX(track.frame.minX, track.frame.maxX))
+        thumb.value = calculateThumbValue(with: thumb.frame.midX)
+        thumb.subtrack.frame = subtrackFrame(forThumbFrame: thumb.frame)
         repositionLayers()
     }
     
@@ -211,11 +238,11 @@ public class HCSlider: UIControl {
             height: Constants.thumbSide)
     }
     
-    private func subtrackFrame(forThumb thumb: HCThumb) -> CGRect {
+    private func subtrackFrame(forThumbFrame frame: CGRect) -> CGRect {
         CGRect(
             x: track.frame.minX,
             y: track.frame.minY,
-            width: thumb.frame.midX - track.frame.minX,
+            width: frame.midX - track.frame.minX,
             height: Constants.trackHeight)
     }
     
@@ -223,6 +250,14 @@ public class HCSlider: UIControl {
         let width = x - track.frame.minX
         let fullWidth = track.frame.maxX - track.frame.minX
         return Float(width / fullWidth)
+    }
+    
+    private func tryToSetValueToNearest(of thumb: HCThumb) {
+        guard !snaps.isEmpty else { return }
+        thumb.value = snaps.nearestValue(to: thumb.value, in: 0..<snaps.count)
+        thumb.frame = thumbFrame(for: thumb.value)
+        thumb.subtrack.frame = subtrackFrame(forThumbFrame: thumb.frame)
+        repositionLayers()
     }
     
     private func setUpView() {
