@@ -1,5 +1,5 @@
 # HCSlider
-[![](https://img.shields.io/badge/UIKit-blue)](https://developer.apple.com/documentation/uikit) [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2F0x01EAC5%2FHCSlider%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/0x01EAC5/HCSlider) [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2F0x01EAC5%2FHCSlider%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/0x01EAC5/HCSlider) [![GitHub License](https://img.shields.io/github/license/0x01eac5/hcslider)](https://github.com/0x01EAC5/HCSlider/blob/main/license.md)
+![iOS](https://img.shields.io/badge/iOS-13.0-blue) [![Framework](https://img.shields.io/badge/Framework-UIKit-blue)](https://developer.apple.com/documentation/uikit) [![Swift](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2F0x01EAC5%2FHCSlider%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/0x01EAC5/HCSlider) [![Platform](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2F0x01EAC5%2FHCSlider%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/0x01EAC5/HCSlider) [![GitHub License](https://img.shields.io/github/license/0x01eac5/hcslider)](https://github.com/0x01EAC5/HCSlider/blob/main/license.md)
 
 
 
@@ -16,7 +16,7 @@ To install HCSlider using [Swift Package Manager](https://github.com/apple/swift
 or you can add the following dependency to your `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/0x01EAC5/HCSlider.git", from: "0.1.0")
+.package(url: "https://github.com/0x01EAC5/HCSlider.git", from: "0.2.0")
 ```
 ### License
 HCSlider is available under the MIT license.
