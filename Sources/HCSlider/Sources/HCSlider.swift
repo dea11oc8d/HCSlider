@@ -75,7 +75,7 @@ public class HCSlider: UIControl {
     
     // MARK: - Internal properties
     
-    lazy var _thumbs = Set<HCThumb>()
+    lazy var _thumbs = [HCThumb]()
     
     // MARK: - Private properties
     
@@ -113,6 +113,21 @@ public class HCSlider: UIControl {
         }
     }
     
+    override public func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let thumbFrames = _thumbs.map { thumb in
+            CGRect(
+                x: thumb.frame.midX - 20,
+                y: thumb.frame.midY - 20,
+                width: 40,
+                height: 40)
+        }
+        if let thumbFrameIndex = thumbFrames.firstIndex(where: { $0.contains(point) }) {
+            return _thumbs[thumbFrameIndex]
+        } else {
+            return super.hitTest(point, with: event)
+        }
+    }
+    
     // MARK: - Public methods
     
     public func addThumb(
@@ -127,7 +142,7 @@ public class HCSlider: UIControl {
             thumb.value = value
             thumb.color = color
             thumb.subtrackColor = subtrackColor
-            _thumbs.insert(thumb)
+            _thumbs.append(thumb)
             addSubview(thumb.subtrack)
             addSubview(thumb)
             thumb.frame = thumbFrame(for: thumb.value)
@@ -199,7 +214,7 @@ public class HCSlider: UIControl {
     private func addThumb(at point: CGPoint) {
         guard _thumbs.count < maxThumbs ?? Int.max else { return }
         let thumb = HCThumb()
-        _thumbs.insert(thumb)
+        _thumbs.append(thumb)
         addSubview(thumb.subtrack)
         addSubview(thumb)
         thumb.frame = thumbFrame(for: point)
