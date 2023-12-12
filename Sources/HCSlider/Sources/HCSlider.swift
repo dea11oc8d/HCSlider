@@ -73,6 +73,8 @@ public class HCSlider: UIControl {
         }
     }
     
+    // MARK: - Internal properties
+    
     lazy var _thumbs = Set<HCThumb>()
     
     // MARK: - Private properties

@@ -47,26 +47,51 @@ final class HCSliderTests: XCTestCase {
     }
     
     func testThumbFrameComplianceWithTheValue() {
-        XCTAssertEqual(slider._thumbs.first(where: { $0.id == "1" })?.frame.minX.rounded(), 20)
-        XCTAssertEqual(slider._thumbs.first(where: { $0.id == "2" })?.frame.minX.rounded(), 85)
+        XCTAssertEqual(
+            slider._thumbs.first(where: { $0.id == "1" })?.frame.minX.rounded(),
+            20)
+        XCTAssertEqual(
+            slider._thumbs.first(where: { $0.id == "1" })?.frame.midX,
+            slider._thumbs.first(where: { $0.id == "1" })?.subtrack.frame.maxX)
+        XCTAssertEqual(
+            slider._thumbs.first(where: { $0.id == "2" })?.frame.minX.rounded(),
+            85)
+        XCTAssertEqual(
+            slider._thumbs.first(where: { $0.id == "2" })?.frame.midX,
+            slider._thumbs.first(where: { $0.id == "2" })?.subtrack.frame.maxX)
     }
     
     func testZLayers() {
-        XCTAssertEqual(slider._thumbs.first(where: { $0.id == "1"})?.layer.zPosition, 3)
-        XCTAssertEqual(slider._thumbs.first(where: { $0.id == "2"})?.layer.zPosition, 2)
+        XCTAssertEqual(
+            slider._thumbs.first(where: { $0.id == "1"})?.layer.zPosition,
+            3)
+        XCTAssertEqual(
+            slider._thumbs.first(where: { $0.id == "2"})?.layer.zPosition,
+            2)
     }
     
     func testAddThumb() {
         slider.addThumb(id: "3", value: 1.0)
-        XCTAssertEqual(slider._thumbs.count, 3)
+        XCTAssertEqual(
+            slider._thumbs.count,
+            3)
         XCTAssertNotNil(slider._thumbs.first(where: { $0.id == "3"}))
+        XCTAssertEqual(
+            slider._thumbs.first(where: { $0.id == "3" })?.frame.midX,
+            slider._thumbs.first(where: { $0.id == "3" })?.subtrack.frame.maxX)
     }
     
     func testRepositionLayers() {
         slider.addThumb(id: "3", value: 0.6)
-        XCTAssertEqual(slider._thumbs.first(where: { $0.id == "1"})?.layer.zPosition, 5)
-        XCTAssertEqual(slider._thumbs.first(where: { $0.id == "2"})?.layer.zPosition, 3)
-        XCTAssertEqual(slider._thumbs.first(where: { $0.id == "3"})?.layer.zPosition, 4)
+        XCTAssertEqual(
+            slider._thumbs.first(where: { $0.id == "1"})?.layer.zPosition,
+            5)
+        XCTAssertEqual(
+            slider._thumbs.first(where: { $0.id == "2"})?.layer.zPosition,
+            3)
+        XCTAssertEqual(
+            slider._thumbs.first(where: { $0.id == "3"})?.layer.zPosition,
+            4)
     }
     
     func testRemoveThumb() {
@@ -77,18 +102,30 @@ final class HCSliderTests: XCTestCase {
     
     func testSetThumbValue() {
         slider.setValue(0.5, forThumbWithId: "1", animated: false)
-        XCTAssertEqual(slider._thumbs.first(where: { $0.id == "1" })?.frame.minX.rounded(), 50)
+        XCTAssertEqual(
+            slider._thumbs.first(where: { $0.id == "1" })?.frame.minX.rounded(),
+            50)
+        XCTAssertEqual(
+            slider._thumbs.first(where: { $0.id == "1" })?.frame.midX,
+            slider._thumbs.first(where: { $0.id == "1" })?.subtrack.frame.maxX)
     }
     
     func testSetThumbValueAnimated() {
         slider.setValue(0.5, forThumbWithId: "1", animated: true)
-        XCTAssertEqual(slider._thumbs.first(where: { $0.id == "1" })?.frame.minX.rounded(), 50)
+        XCTAssertEqual(
+            slider._thumbs.first(where: { $0.id == "1" })?.frame.minX.rounded(),
+            50)
     }
     
     func testSetThumbValueWithPivots() {
         slider.snaps = [0.45, 0.55, 1.0]
         slider.setValue(0.5, forThumbWithId: "1", animated: false)
-        XCTAssertEqual(slider._thumbs.first(where: { $0.id == "1" })?.frame.minX.rounded(), 45)
+        XCTAssertEqual(
+            slider._thumbs.first(where: { $0.id == "1" })?.frame.minX.rounded(),
+            45)
+        XCTAssertEqual(
+            slider._thumbs.first(where: { $0.id == "1" })?.frame.midX,
+            slider._thumbs.first(where: { $0.id == "1" })?.subtrack.frame.maxX)
     }
     
     func testSetThumbValueWithPivotsAnimated() {
