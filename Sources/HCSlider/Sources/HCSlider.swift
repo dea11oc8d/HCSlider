@@ -158,7 +158,7 @@ public class HCSlider: UIControl {
                         y: .zero)
                     thumb.subtrack.transform = CGAffineTransform(
                         scaleX: subtrackNewFrame.midX / thumb.subtrack.frame.midX,
-                        y: .zero)
+                        y: 1)
                 })
         } else {
             thumb.frame = thumbNewFrame
