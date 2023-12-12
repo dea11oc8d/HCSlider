@@ -41,12 +41,6 @@ public class HCSlider: UIControl {
     /// The thumbs' values
     public var values: [String: Float] { _thumbs.reduce(into: [String: Float](), { $0[$1.id] = $1.value }) }
     
-    public var snaps = [Float]() {
-        didSet {
-            snaps.sort(by: { $0 < $1 })
-        }
-    }
-    
     /// A Boolean value that determines whether user can add new thumbs by tapping on the view.
     /// The default value of this property is false.
     //    public var isUserExtendedInteractionEnabled = false {
@@ -62,6 +56,13 @@ public class HCSlider: UIControl {
     
     /// Max number of thumbs that can be added.
     public var maxThumbs: Int?
+    
+    /// Points on the track that the thumbs tend to reach.
+    public var snaps = [Float]() {
+        didSet {
+            snaps.sort(by: { $0 < $1 })
+        }
+    }
     
     /// Color of the slider's track.
     public var trackColor: UIColor {
