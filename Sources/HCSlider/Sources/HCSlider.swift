@@ -54,6 +54,9 @@ public class HCSlider: UIControl {
     ///  The default value of this property is false.
     public var isContinuous = false
     
+    /// A Boolean value that determines can the thumbs cross each other.
+    public var canThumbsCross = true
+    
     /// Max number of thumbs that can be added.
     public var maxThumbs: Int?
     
@@ -196,17 +199,6 @@ public class HCSlider: UIControl {
             height: Constants.thumbSide)
     }
     
-    private func repositionLayers() {
-        var subtrackFirstPosition: CGFloat = 0
-        var thumbFirstPosition: CGFloat = CGFloat(_thumbs.count)
-        _thumbs.sorted(by: { $0.value > $1.value }).forEach {
-            $0.subtrack.layer.zPosition = subtrackFirstPosition
-            subtrackFirstPosition += 1
-            $0.layer.zPosition = thumbFirstPosition
-            thumbFirstPosition += 1
-        }
-    }
-    
     @objc private func tapped(_ sender: UITapGestureRecognizer) {
         let point = sender.location(in: self)
         addThumb(at: point)
@@ -242,7 +234,20 @@ public class HCSlider: UIControl {
     }
     
     private func moveThumb(_ thumb: HCThumb, to point: CGPoint) {
-        thumb.frame = thumbFrame(for: point.clampX(track.frame.minX, track.frame.maxX))
+        if canThumbsCross {
+            thumb.frame = thumbFrame(for: point.clampX(track.frame.minX, track.frame.maxX))
+        } else {
+            if
+            let leftThumb = _thumbs.last(where: { $0.value < thumb.value }),
+            let rightThumb = _thumbs.first(where: { $0.value > thumb.value }) {
+                
+                let leftPoint = max(track.frame.minX, leftThumb.frame.midX)
+                let rightPoint = min(track.frame.maxX, rightThumb.frame.midX)
+                thumb.frame = thumbFrame(for: point.clampX(leftPoint, rightPoint))
+            } else {
+                thumb.frame = thumbFrame(for: point.clampX(track.frame.minX, track.frame.maxX))
+            }
+        }
         thumb.value = calculateThumbValue(with: thumb.frame.midX)
         thumb.subtrack.frame = subtrackFrame(forThumbFrame: thumb.frame)
         repositionLayers()
@@ -276,6 +281,17 @@ public class HCSlider: UIControl {
         thumb.frame = thumbFrame(for: thumb.value)
         thumb.subtrack.frame = subtrackFrame(forThumbFrame: thumb.frame)
         repositionLayers()
+    }
+    
+    private func repositionLayers() {
+        var subtrackFirstPosition: CGFloat = 0
+        var thumbFirstPosition: CGFloat = CGFloat(_thumbs.count)
+        _thumbs.sorted { $0.value < $1.value }.forEach {
+            $0.subtrack.layer.zPosition = subtrackFirstPosition
+            subtrackFirstPosition += 1
+            $0.layer.zPosition = thumbFirstPosition
+            thumbFirstPosition += 1
+        }
     }
     
     private func setUpView() {
