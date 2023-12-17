@@ -237,8 +237,8 @@ public class HCSlider: UIControl {
     
     private func moveThumb(_ thumb: HCThumb, to point: CGPoint) {
         _thumbs.sort { $0.value > $1.value }
-        let leftThumb = canThumbCrossAnother ? nil : _thumbs.first(where: { $0.value < thumb.value })
-        let rightThumb = canThumbCrossAnother ? nil : _thumbs.last(where: { $0.value > thumb.value })
+        let leftThumb = canThumbCrossAnother ? nil : _thumbs.first(where: { $0.value <= thumb.value })
+        let rightThumb = canThumbCrossAnother ? nil : _thumbs.last(where: { $0.value >= thumb.value })
         let leftPoint = max(track.frame.minX, leftThumb?.frame.midX ?? track.frame.minX)
         let rightPoint = min(track.frame.maxX, rightThumb?.frame.midX ?? track.frame.maxX)
         thumb.frame = thumbFrame(for: point.clampX(leftPoint, rightPoint))
