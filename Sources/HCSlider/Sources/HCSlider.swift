@@ -234,20 +234,11 @@ public class HCSlider: UIControl {
     }
     
     private func moveThumb(_ thumb: HCThumb, to point: CGPoint) {
-        if canThumbsCross {
-            thumb.frame = thumbFrame(for: point.clampX(track.frame.minX, track.frame.maxX))
-        } else {
-            if
-            let leftThumb = _thumbs.last(where: { $0.value < thumb.value }),
-            let rightThumb = _thumbs.first(where: { $0.value > thumb.value }) {
-                
-                let leftPoint = max(track.frame.minX, leftThumb.frame.midX)
-                let rightPoint = min(track.frame.maxX, rightThumb.frame.midX)
-                thumb.frame = thumbFrame(for: point.clampX(leftPoint, rightPoint))
-            } else {
-                thumb.frame = thumbFrame(for: point.clampX(track.frame.minX, track.frame.maxX))
-            }
-        }
+        let leftThumb = canThumbsCross ? nil : _thumbs.last(where: { $0.value < thumb.value })
+        let rightThumb = canThumbsCross ? nil : _thumbs.first(where: { $0.value > thumb.value })
+        let leftPoint = max(track.frame.minX, leftThumb?.frame.midX ?? track.frame.minX)
+        let rightPoint = min(track.frame.maxX, rightThumb?.frame.midX ?? track.frame.maxX)
+        thumb.frame = thumbFrame(for: point.clampX(leftPoint, rightPoint))
         thumb.value = calculateThumbValue(with: thumb.frame.midX)
         thumb.subtrack.frame = subtrackFrame(forThumbFrame: thumb.frame)
         repositionLayers()
@@ -286,7 +277,7 @@ public class HCSlider: UIControl {
     private func repositionLayers() {
         var subtrackFirstPosition: CGFloat = 0
         var thumbFirstPosition: CGFloat = CGFloat(_thumbs.count)
-        _thumbs.sorted { $0.value < $1.value }.forEach {
+        _thumbs.sorted { $0.value > $1.value }.forEach {
             $0.subtrack.layer.zPosition = subtrackFirstPosition
             subtrackFirstPosition += 1
             $0.layer.zPosition = thumbFirstPosition
