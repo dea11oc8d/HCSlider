@@ -55,7 +55,7 @@ public class HCSlider: UIControl {
     public var isContinuous = false
     
     /// A Boolean value that determines can the thumbs cross each other.
-    public var canThumbsCross = true
+    public var canThumbCrossAnother = true
     
     /// Max number of thumbs that can be added.
     public var maxThumbs: Int?
@@ -234,8 +234,9 @@ public class HCSlider: UIControl {
     }
     
     private func moveThumb(_ thumb: HCThumb, to point: CGPoint) {
-        let leftThumb = canThumbsCross ? nil : _thumbs.last(where: { $0.value < thumb.value })
-        let rightThumb = canThumbsCross ? nil : _thumbs.first(where: { $0.value > thumb.value })
+        _thumbs.sort { $0.value > $1.value }
+        let leftThumb = canThumbCrossAnother ? nil : _thumbs.first(where: { $0.value < thumb.value })
+        let rightThumb = canThumbCrossAnother ? nil : _thumbs.last(where: { $0.value > thumb.value })
         let leftPoint = max(track.frame.minX, leftThumb?.frame.midX ?? track.frame.minX)
         let rightPoint = min(track.frame.maxX, rightThumb?.frame.midX ?? track.frame.maxX)
         thumb.frame = thumbFrame(for: point.clampX(leftPoint, rightPoint))
@@ -277,7 +278,7 @@ public class HCSlider: UIControl {
     private func repositionLayers() {
         var subtrackFirstPosition: CGFloat = 0
         var thumbFirstPosition: CGFloat = CGFloat(_thumbs.count)
-        _thumbs.sorted { $0.value > $1.value }.forEach {
+        _thumbs.forEach {
             $0.subtrack.layer.zPosition = subtrackFirstPosition
             subtrackFirstPosition += 1
             $0.layer.zPosition = thumbFirstPosition
