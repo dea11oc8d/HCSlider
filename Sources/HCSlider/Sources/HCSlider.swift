@@ -151,6 +151,7 @@ public class HCSlider: UIControl {
             addSubview(thumb)
             thumb.frame = thumbFrame(for: thumb.value)
             thumb.subtrack.frame = subtrackFrame(forThumbFrame: thumb.frame)
+            _thumbs.sort { $0.value > $1.value }
             repositionLayers()
         }
     
@@ -185,6 +186,7 @@ public class HCSlider: UIControl {
             thumb.frame = thumbNewFrame
             thumb.subtrack.frame = subtrackNewFrame
         }
+        _thumbs.sort { $0.value > $1.value }
         repositionLayers()
     }
     
@@ -272,6 +274,7 @@ public class HCSlider: UIControl {
         thumb.value = snaps.nearestValue(to: thumb.value, in: 0..<snaps.count)
         thumb.frame = thumbFrame(for: thumb.value)
         thumb.subtrack.frame = subtrackFrame(forThumbFrame: thumb.frame)
+        _thumbs.sort { $0.value > $1.value }
         repositionLayers()
     }
     
